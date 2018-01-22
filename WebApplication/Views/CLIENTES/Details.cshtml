@@ -1,0 +1,141 @@
+﻿@model WebApplication.Models.CLIENTE
+@using WebApplication.Models
+@using WebApplication.Models.Enums
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+@section Menu {
+    @Scripts.Render("~/Scripts/Forms/Advanced/menu")
+    @Scripts.Render("~/Scripts/Forms/General/menu")
+}
+@Styles.Render("~/AdminLTE/plugins/daterangepicker/css")
+@Styles.Render("~/AdminLTE/plugins/icheck/css")
+@Styles.Render("~/AdminLTE/plugins/colorpicker/css")
+@Styles.Render("~/AdminLTE/plugins/timepicker/css")
+@Styles.Render("~/AdminLTE/plugins/select2/css")
+@Styles.Render("~/AdminLTE/dist/css")
+@Styles.Render("~/AdminLTE/dist/css/skins")
+
+@{
+    ViewBag.Title = Model.NOME;
+    ViewBag.SubTitle = "Codigo da Colaborador:" + Html.DisplayFor(model => model.COD_CLIENTE);
+}
+
+<div class="row">
+    <div class="col-xs-6">
+        <div class="nav-tabs-custom">
+            <div class="tab-content">
+                <h2>
+                    <i class="pull-left fa fa-hospital-o"></i> @Html.DisplayFor(model => model.NOME) &nbsp;&nbsp;<small class="pull-right"><small>@*@Html.DisplayFor(model => model.wDATA_CADASTRO)*@</small></small><small class="pull-right"><small>Último Contato:</small></small>
+                </h2>
+                @Html.DisplayFor(model => model.CPF_CNPJ)<br />
+
+                <div class="active tab-pane">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <div class="row invoice-info">
+                                <div class="col-sm-9 invoice-col">
+                                    <address>
+                                        NOME:@Html.DisplayFor(model => model.NOME)<br />
+                                        CPF/CNPJ:@Html.DisplayFor(model => model.CPF_CNPJ)<br />
+                                        DDD: @Html.DisplayFor(model => model.DDD)<br />
+                                        CONTATO: @Html.DisplayFor(model => model.CONTATO)<br />
+                                        CEP: @Html.DisplayFor(model => model.CEP)<br />
+                                        CIDADE: @Html.DisplayFor(model => model.CIDADE)<br />
+                                        LOGRADOURO: @Html.DisplayFor(model => model.LOGRADOURO)<br />
+                                        BAIRRO: @Html.DisplayFor(model => model.BAIRRO)<br />
+                                        REGIAO:@Html.DisplayFor(model => model.BAIRRO)
+                                        NUMERO:@Html.DisplayFor(model => model.Numero)<br />
+                                    </address>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="box box-info direct-chat direct-chat-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title" id="tituloGridRetornos">CREDENCIAMENTOS</h3>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                    Ações
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li data-target="#ModalCREDENCIAMENTOS" data-toggle="modal"><a href="#">GERAR PEDIDO</a></li>
+                </ul>
+            </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="direct-chat-messages">
+                @foreach (PEDIDO item in ViewBag.pedidos)
+            {
+                    <div class="box box-solid box-primary">
+                        <div class="box-header">
+                        </div>
+                        <div class="box-body">
+                            &nbsp;&nbsp;<h2><small>@Html.DisplayFor(modelItem => item.COD_PEDIDO)</small></h2>
+                            &nbsp;&nbsp;<p>Preço :@Html.DisplayFor(modelItem => item.PRECO)</p>
+                            &nbsp;&nbsp;<p>Status: @Html.DisplayFor(modelItem => item.STATUS_PEDIDO)</p>
+                            &nbsp; &nbsp;@if (item.STATUS_PEDIDO != StatusPedido.CANCELADO || item.STATUS_PEDIDO != StatusPedido.CONCLUIDO)
+                            {
+                                <p><a href="@Url.Action("Edit","PEDIDOS",new { id = item.COD_PEDIDO})"> Editar</a></p>
+                            }
+                            <hr />
+                            @item.NOME
+                        </div>
+                        <div class="box-footer"></div>
+                    </div>
+                }
+            </div>
+        </div>
+        <!-- /.box-body -->
+    </div>
+</div>
+<div class="modal fade" id="ModalCREDENCIAMENTOS" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Cadastrar Credenciamento</h3>
+                @using (Html.BeginForm("Create", "Pedido", new { ID_CLIENTE = Model.COD_CLIENTE }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        Status
+                        <select class="form-control" id="STATUS_PEDIDO" name="STATUS_PEDIDO">
+                            <option value="1">CANCELADO</option>
+                            <option value="2">ANDAMENTO</option>
+                            <option value="3">CANCELADO</option>
+                        </select>
+                        <select class="form-control" id="NOME" name="NOME">
+                            @foreach (PRODUTO produto in ViewBag.Pedidos)
+
+                            {
+                                <option value="@produto.COD_PRODUTO">@produto.NOME:R$@produto.PRECO</option>
+                            }
+                        </select>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-info btn-flat">GERAR CREDENCIAMENTOS</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.COD_CLIENTE }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
